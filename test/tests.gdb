@@ -39,8 +39,20 @@ echo Running all tests..."\n\n
 #checkResult
 
 # Add tests below
-test "PORTB"
-continue 5
+test "Loop all of PORTB"
+set state = start
+#continue 5
+expect state pb0
+expectPORTB 0x01
+#continue 5
+expect state pb1
+expectPORTB 0x02
+#continue 5
+expect state pb2
+expect PORTB 0x04
+#continue 5
+expect state pb0
+expectPORTB 0x01
 checkResult
 
 # Report on how many tests passed/tests ran
