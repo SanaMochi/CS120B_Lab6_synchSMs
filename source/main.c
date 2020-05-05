@@ -110,7 +110,7 @@ int main(void) {
 //	unsigned char tmpB = 0x00;
     /* Insert your solution below */
     while (1) {
-	A0 = (PINA & 0x01);
+	A0 = !(PINA & 0x01);
 	//User code (i.e. synchSM calls)
 //	tmpB = ~tmpB; // Toggle PORTB; Temporary, bad programming style
 //	PORTB = tmpB;
