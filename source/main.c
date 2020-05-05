@@ -13,7 +13,7 @@
 #include "../header/timer.h"
 #endif
 
-enum States {start, pb0, waitfall0, wait0, pb1, waitfall1, wait1, pb2, waitfall2, wait2, pb11, waitfall11, wait11} state;
+enum States {start, pb0, waitfall, wait, pb1, pb2, pb11} state;
 
 unsigned char A0 = 0x00;
 
@@ -24,52 +24,52 @@ void Tick() {
 			break;
 		case pb0:
 			if (!A0) state = pb1;
-			else state = waitfall0;
+			else state = waitfall;
 			break;
-		case waitfall0:
-			if (!A0) state = wait0;
-			else state = waitfall0;
+		case waitfall:
+			if (!A0) state = wait;
+			else state = waitfall;
 			break;
-		case wait0:
-			if (!A0) state = wait0;
-			else state = pb1;
+		case wait:
+			if (!A0) state = wait;
+			else state = pb0;
 			break;
 		case pb1:
 			if (!A0) state = pb2;
-			else state = waitfall1;
+			else state = waitfall;
 			break;
-		case waitfall1:
-			if (!A0) state = wait1;
-			else state = waitfall1;
-			break;
-		case wait1:
-			if (!A0) state = wait1;
-			else state = pb2;
-			break;
+//		case waitfall1:
+//			if (!A0) state = wait1;
+//			else state = waitfall1;
+//			break;
+//		case wait1:
+//			if (!A0) state = wait1;
+//			else state = pb2;
+//			break;
 		case pb2:
 			if (!A0) state = pb11;
-			else state = waitfall2;
+			else state = waitfall;
                         break;
-                case waitfall2:
-                        if (!A0) state = wait2;
-                        else state = waitfall2;
-                        break;
-                case wait2:
-                        if (!A0) state = wait2;
-                        else state = pb11;
-			break;			
+//		case waitfall2:
+//			if (!A0) state = wait2;
+//                        else state = waitfall2;
+//                        break;
+//                case wait2:
+//                        if (!A0) state = wait2;
+//                        else state = pb11;
+//			break;			
 		case pb11:
 			if (!A0) state = pb0; 
-			else state = waitfall11;
-                        break;
-                case waitfall11:
-                        if (!A0) state = wait11;
-                        else state = waitfall11;
-                        break;
-                case wait11:
-                        if (!A0) state = wait11;
-                        else state = pb0;
+			else state = waitfall;
 			break;
+//                case waitfall11:
+//                        if (!A0) state = wait11;
+//                        else state = waitfall11;
+//                        break;
+//                case wait11:
+//                        if (!A0) state = wait11;
+//                        else state = pb0;
+//			break;
 		default:
 			state = start;
 			break;
@@ -78,23 +78,23 @@ void Tick() {
 		case pb0:
 			PORTB = 0x01;
 			break;
-		case waitfall0:	break;
-		case wait0: 	break;
+		case waitfall:	break;
+		case wait: 	break;
 		case pb1:
 			PORTB = 0x02;
 			break;
-		case waitfall1: break;
-		case wait1:	break;
+//		case waitfall1: break;
+//		case wait1:	break;
 		case pb2:
 			PORTB = 0x04;
 			break;
-		case waitfall2:	break;
-		case wait2:	break;
+//		case waitfall2:	break;
+//		case wait2:	break;
 		case pb11:
 			PORTB = 0x02;
 			break;
-		case waitfall11:break;
-		case wait11:	break;
+//		case waitfall11:break;
+//		case wait11:	break;
 		default: 	break;
 	};
 }

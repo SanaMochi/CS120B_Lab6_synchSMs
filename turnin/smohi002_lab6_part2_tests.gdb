@@ -72,31 +72,31 @@ expect state pb1
 expectPORTB 0x02
 setPINA 0x01
 timeContinue
-expect state waitfall1
+expect state waitfall
 expectPORTB 0x02
 setPINA 0x01
 timeContinue
-expect state waitfall1
+expect state waitfall
 expectPORTB 0x02
 setPINA 0x00
 timeContinue
-expect state wait1
+expect state wait
 expect PORTB 0x02
 setPINA 0x00
 timeContinue
-expect state wait1
+expect state wait
 expect PORTB 0x02
 setPINA 0x01
 timeContinue
-expect state pb2
-expectPORTB 0x04
+expect state pb0
+expectPORTB 0x01
 checkResult
 
 test "button on pb"
 setPINA 0x01
 timeContinue
-expect state waitfall2
-expect PORTB 0x04
+expect state waitfall
+expect PORTB 0x01
 timeContinue
 
 checkResult
