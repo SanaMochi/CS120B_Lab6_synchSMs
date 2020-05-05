@@ -39,8 +39,9 @@ echo Running all tests..."\n\n
 #checkResult
 
 # Add tests below
-test "Loop all of PORTB"
+test "Loop all of PORTB without buttons"
 set state = start
+setPINA 0x00
 timeContinue
 expect state pb0
 expectPORTB 0x01
@@ -51,8 +52,45 @@ timeContinue
 expect state pb2
 expect PORTB 0x04
 timeContinue
+expect state pb11
+expectPORTB 0x02
+timeContinue
 expect state pb0
 expectPORTB 0x01
+checkResult
+
+test "Loop all of PORTB with button on pb1"
+set state = start
+setPINA 0x00
+timeContinue
+expect state pb0
+expectPORTB 0x01
+timeContinue
+expect state pb1
+expectPORTB 0x02
+setPINA 0x01
+timeContinue
+expect state waitfall1
+expectPORTB 0x02
+setPINA 0x01
+timeContinue
+expect state waitfall1
+expectPORTB 0x02
+setPINA 0x00
+timeContinue
+expect state wait1
+expect PORTB 0x02
+setPINA 0x00
+timeContinue
+expect state wait1
+expect PORTB 0x02
+setPINA 0x01
+timeContinue
+expect state pb2
+expectPORTB 0x04
+setPINA 0x01
+
+
 checkResult
 
 # Report on how many tests passed/tests ran

@@ -1,7 +1,7 @@
-Breakpoint 1 at 0x3b6: file source/main.c, line 59.
+Breakpoint 1 at 0x5ae: file source/main.c, line 112.
 Note: automatically using hardware breakpoints for read-only addresses.
 ======================================================
 Running all tests..."
 
-"Loop all of PORTB"...======================================================
+"Loop all of PORTB without buttons"..."Loop all of PORTB with button on pb1"...======================================================
 Remote doesn't know how to detach
