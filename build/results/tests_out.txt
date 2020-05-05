@@ -3,5 +3,5 @@ Note: automatically using hardware breakpoints for read-only addresses.
 ======================================================
 Running all tests..."
 
-"Loop all of PORTB without buttons"..."Loop all of PORTB with button on pb1"...======================================================
+"Loop all of PORTB without buttons"..."Loop all of PORTB with button on pb1"..."button on pb"...======================================================
 Remote doesn't know how to detach

@@ -48,7 +48,7 @@ void Tick() {
 			break;
 		case pb2:
 			if (!A0) state = pb11;
-                        else state = waitfall2;
+			else state = waitfall2;
                         break;
                 case waitfall2:
                         if (!A0) state = wait2;
@@ -60,7 +60,7 @@ void Tick() {
 			break;			
 		case pb11:
 			if (!A0) state = pb0; 
-                        else state = waitfall11;
+			else state = waitfall11;
                         break;
                 case waitfall11:
                         if (!A0) state = wait11;
