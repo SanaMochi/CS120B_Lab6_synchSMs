@@ -26,30 +26,18 @@
 echo ======================================================\n
 echo Running all tests..."\n\n
 
-# Example test:
-#test "PINA: 0x00, PINB: 0x00 => PORTC: 0"
-# Set inputs
-#setPINA 0x00
-#setPINB 0x00
-# Continue for several ticks
-#continue 2
-# Set expect values
-#expectPORTC 0
-# Check pass/fail
-#checkResult
-
 # Add tests below
 test "Loop all of PORTB without buttons"
 set state = start
-setPINA 0x00
+setPINA 0xFF
 timeContinue
 expect state pb0
 expectPORTB 0x01
-setPINA 0x00
+setPINA 0xFF
 timeContinue
 expect state pb1
 expectPORTB 0x02
-setPINA 0x00
+setPINA 0xFF
 timeContinue
 expect state pb2
 expect PORTB 0x04
@@ -63,37 +51,37 @@ checkResult
 
 test "Loop all of PORTB with button on pb1"
 set state = start
-setPINA 0x00
+setPINA 0xFF
 timeContinue
 expect state pb0
 expectPORTB 0x01
 timeContinue
 expect state pb1
 expectPORTB 0x02
-setPINA 0x01
+setPINA 0xFE
 timeContinue
 expect state waitfall
 expectPORTB 0x02
-setPINA 0x01
+setPINA 0xFE
 timeContinue
 expect state waitfall
 expectPORTB 0x02
-setPINA 0x00
+setPINA 0xFF
 timeContinue
 expect state wait
 expect PORTB 0x02
-setPINA 0x00
+setPINA 0xFF
 timeContinue
 expect state wait
 expect PORTB 0x02
-setPINA 0x01
+setPINA 0xFE
 timeContinue
 expect state pb0
 expectPORTB 0x01
 checkResult
 
-test "button on pb"
-setPINA 0x01
+test "button on pb0"
+setPINA 0xFE
 timeContinue
 expect state waitfall
 expect PORTB 0x01
