@@ -13,103 +13,89 @@
 #include "../header/timer.h"
 #endif
 
-enum States {start, pb0, waitfall, wait, pb1, pb2, pb11, pb0h, pb1h, pb2h, pb11h} state;
 
-unsigned char A0 = 0x00;
+
+enum States {start, Init, wait, dec, waitDec, inc, waitInc, reset, waitReset} state;
+
+      unsigned char tmpA;
 
 void Tick() {
 	switch(state) {
 		case start:
-			state = pb0;
+//			PORTB = 0x07;
+			state = Init;
 			break;
-		case pb0:
-			if (!A0) state = pb1;
-			else state = waitfall;
+		case Init:
+			PORTB = 0x07;
+			state = wait;
 			break;
-		case pb1:
-			if (!A0) state = pb2;
-			else state = waitfall;
+		case wait:
+			if (tmpA == 0x00) {	 state = wait;}
+			else if (tmpA == 0x01) { state = inc;}
+			else if (tmpA == 0x02) { state = dec;}
+			else 		       {  state = reset;}
 			break;
-		case pb2:
-			if (!A0) state = pb11;
-			else state = waitfall;
+		case dec:
+			if (tmpA == 0x02) {	 state = waitDec;}
+			else if (tmpA == 0x03) { state = reset;}
+			else {			 state = wait;}
+			break;
+		case waitDec:
+			if (tmpA == 0x02) {	 state = waitDec;}
+			else if (tmpA == 0x03) { state = reset;}
+			else {			 state = wait;}
+			break;
+		case inc:
+			if (tmpA == 0x01) {      state = waitInc;}
+                        else if (tmpA == 0x03) { state = reset;}
+                        else {                   state = wait;}
+			break;
+		case waitInc:
+			if (tmpA == 0x01) {	 state = waitInc;}
+                        else if (tmpA == 0x03) { state = reset;}
+			else { 			 state = wait;}
                         break;
-		case pb11:
-			if (!A0) state = pb0; 
-			else state = waitfall;
+		case reset:
+                        if (tmpA == 0x03) { state = waitReset;}
+                        else {              state = wait;}
 			break;
-		case waitfall:
-                        if (!A0) state = wait;
-                        else state = waitfall;
+		case waitReset:
+			if (tmpA == 0x03) { state = waitReset;}
+			else {		    state = wait;}
                         break;
-                case wait:
-                        if (!A0) state = wait;
-                        else {state = pb0h; PORTB = 0x01;}
-                        break;
-		case pb0h:
-			if (!A0) state = pb1;
-			else state = pb1h;
-			break;
-		case pb1h:
-			if (!A0) state = pb2;
-			else state = pb2h;
-			break;
-		case pb2h:
-			if (!A0) state = pb11;
-			else state = pb11h;
-			break;
-		case pb11h:
-			if (!A0) state = pb0;
-			else state = pb0h;
-			break;
 		default:
+			PORTB = 0x07;
 			state = start;
 			break;
-	};
+	}
 	switch(state) {
-		case pb0:
-			PORTB = 0x01;
-			break;
-		case pb1:
-			PORTB = 0x02;
-			break;
-		case pb2:
-			PORTB = 0x04;
-			break;
-		case pb11:
-			PORTB = 0x02;
-			break;
-		case waitfall:  break;
-                case wait:	break;
-		case pb0h:
-			PORTB = 0x01;
-			break;
-		case pb1h:
-			PORTB = 0x02;
-			break;
-		case pb2h:
-			PORTB = 0x04;
-			break;
-		case pb11h:
-			PORTB = 0x02;
-			break;
-		default: 	break;
-	};
+		case Init:	/*PORTB = 0x07;*/			break;
+		case wait:					break;
+		case dec:	if (PORTB != 0x00) {PORTB--;}	break;
+		case waitDec:					break;
+		case inc:	if (PORTB != 0x09) {PORTB++;}	break;
+		case waitInc:					break;
+		case reset:	PORTB = 0x00;			break;
+		case waitReset:					break;
+		default:	/*PORTB = 0x07;*/		break;
+	}
 }
-	
+
 int main(void) {
-	DDRA = 0x00; // Set port A to input
-	DDRB = 0xFF; // Set port B to output
-	PORTA = 0xFF; //Init port A to 0xFF
-	PORTB = 0x00; // Init port B to 0x00
-	TimerSet(300);
-	TimerOn();
+    /* Insert DDR and PORT initializations */
+	DDRA = 0x00; PORTA = 0xFF; //PORTA = input
+	DDRB = 0xFF; PORTB = 0x07; //PORTC = output
+
+//	TimerSet(100);
+//	TimerOn();
+
+	state = start;
 
     while (1) {
-	A0 = (~PINA & 0x01);
-	Tick();
-	while(!TimerFlag); // Wait 1 sec
-	TimerFlag = 0;
+	tmpA = ~PINA & 0x03;
+	Tick();	
+//	while(!TimerFlag);
+//	TimerFlag = 0;
     }
     return 1;
 }

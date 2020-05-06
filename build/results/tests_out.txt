@@ -1,8 +1,7 @@
-Breakpoint 1 at 0x598: file source/main.c, line 108.
+Breakpoint 1 at 0x5a4: file source/main.c, line 94.
 Note: automatically using hardware breakpoints for read-only addresses.
 ======================================================
 Running all tests..."
 
-"Loop all of PORTB without buttons"..."Loop all of PORTB with button on pb1"..."buton held down on second press"...
-	Expected pb1 but got state:8======================================================
+"All possible paths tested & increment on 0x09"..."PINA: 0x03 => PORTC: 0, state: wait"..."PINA: 0x01 => PORTC: 8, state: waitInc"..."PINA: 0x02 => PORTC: 6, state: waitDec"..."Decrement on 0x00"...======================================================
 Remote doesn't know how to detach

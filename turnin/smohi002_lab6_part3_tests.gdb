@@ -29,8 +29,9 @@ echo Running all tests..."\n\n
 
 # Test 1
 test "All possible paths tested & increment on 0x09"
-set state = wait
-expectPORTC 0x07
+set state = Init
+timeContinue
+expectPORTB 0x07
 setPINA 0xFF
 timeContinue
 expect state wait
@@ -40,7 +41,7 @@ expect state wait
 setPINA 0xFE
 timeContinue
 expect state inc
-expectPORTC 0x08
+expectPORTB 0x08
 setPINA 0xFE
 timeContinue
 expect state waitInc
@@ -50,16 +51,16 @@ expect state wait
 setPINA 0xFE
 timeContinue
 expect state inc
-expectPORTC 0x09
+expectPORTB 0x09
 setPINA 0xFF
 timeContinue
 expect state wait
-expectPORTC 0x09
+expectPORTB 0x09
 timeContinue
 setPINA 0xFE
 timeContinue
 expect state inc
-expectPORTC 0x09
+expectPORTB 0x09
 setPINA 0xFF
 timeContinue
 expect state wait
@@ -74,12 +75,13 @@ checkResult
 
 # Test 2
 test "PINA: 0x03 => PORTC: 0, state: wait"
-set state = wait
-expectPORTC 0x07
+set state = Init
+timeContinue
+expectPORTB 0x07
 setPINA 0xFC
 timeContinue
 expect state reset
-expectPORTC 0x00
+expectPORTB 0x00
 setPINA 0xFC
 timeContinue
 expect state waitReset
@@ -87,29 +89,31 @@ checkResult
 
 # Test 3
 test "PINA: 0x01 => PORTC: 8, state: waitInc"
-set state = wait
+set state = Init
+timeContinue
 setPINA 0xFE
 timeContinue
 expect state inc
-expectPORTC 0x08
+expectPORTB 0x08
 checkResult
 
 # Test 4
 test "PINA: 0x02 => PORTC: 6, state: waitDec"
-set state = wait
+set state = Init
+timeContinue
 setPINA 0xFD
 timeContinue
 expect state dec
-expectPORTC 0x06
+expectPORTB 0x06
 checkResult
 
 # Test 5
 test "Decrement on 0x00"
-set state = wait
+set state = Init
 timeContinue
 setPINA 0xFD
 timeContinue
-expectPORTC 0x06
+expectPORTB 0x06
 expect state dec
 setPINA 0xFD
 timeContinue
@@ -119,22 +123,22 @@ timeContinue
 expect state wait
 setPINA 0xFD
 timeContinue
-expectPORTC 0x05
+expectPORTB 0x05
 expect state dec
 setPINA 0xFF
 timeContinue
 expect state wait
 setPINA 0xFC
 timeContinue
-expectPORTC 0x00
+expectPORTB 0x00
 expect state reset
 setPINA 0xFF
 timeContinue
-expectPORTC 0x00
+expectPORTB 0x00
 expect state wait
 setPINA 0xFD
 timeContinue
-expectPORTC 0x00
+expectPORTB 0x00
 expect state dec
 #setPINA 0x00
 #continue 5
