@@ -86,16 +86,16 @@ int main(void) {
 	DDRA = 0x00; PORTA = 0xFF; //PORTA = input
 	DDRB = 0xFF; PORTB = 0x07; //PORTC = output
 
-//	TimerSet(100);
-//	TimerOn();
+	TimerSet(100);
+	TimerOn();
 
 	state = start;
 
     while (1) {
 	tmpA = ~PINA & 0x03;
 	Tick();	
-//	while(!TimerFlag);
-//	TimerFlag = 0;
+	while(!TimerFlag);
+	TimerFlag = 0;
     }
     return 1;
 }
