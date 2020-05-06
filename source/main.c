@@ -15,18 +15,15 @@
 
 
 
-enum States {start, Init, wait, dec, waitDec, inc, waitInc, reset, waitReset} state;
+enum States {start, wait, dec, waitDec, inc, waitInc, reset, waitReset} state;
 
       unsigned char tmpA;
 
 void Tick() {
 	switch(state) {
 		case start:
-			state = Init;
-			break;
-		case Init:
-			state = wait;
 			PORTC = 0x07;
+			state = wait;
 			break;
 		case wait:
 			if (tmpA == 0x00) {	 state = wait;}
@@ -35,7 +32,6 @@ void Tick() {
 			else 		       {  state = reset;}
 			break;
 		case dec:
-//			state = waitDec;
 			if (tmpA == 0x02) {	 state = waitDec;}
 			else if (tmpA == 0x03) { state = reset;}
 			else {			 state = wait;}
@@ -46,7 +42,6 @@ void Tick() {
 			else {			 state = wait;}
 			break;
 		case inc:
-//			state = waitInc;
 			if (tmpA == 0x01) {      state = waitInc;}
                         else if (tmpA == 0x03) { state = reset;}
                         else {                   state = wait;}
@@ -57,7 +52,6 @@ void Tick() {
 			else { 			 state = wait;}
                         break;
 		case reset:
-//			state = waitReset;
                         if (tmpA == 0x03) { state = waitReset;}
                         else {              state = wait;}
 			break;
@@ -69,9 +63,8 @@ void Tick() {
 			PORTC = 0x07;
 			state = start;
 			break;
-	};
+	}
 	switch(state) {
-		case Init:					break;
 		case wait:					break;
 		case dec:	if (PORTC != 0x00) {PORTC--;}	break;
 		case waitDec:					break;
@@ -80,18 +73,20 @@ void Tick() {
 		case reset:	PORTC = 0x00;			break;
 		case waitReset:					break;
 		default:					break;
-	};
+	}
 }
 
 int main(void) {
     /* Insert DDR and PORT initializations */
 	DDRA = 0x00; PORTA = 0xFF; //PORTA = input
-	DDRC = 0xFF; PORTC = 0x00; //PORTB = output
+	DDRC = 0xFF; PORTC = 0x00; //PORTC = output
 
 	TimerSet(100);
 	TimerOn();
 
 	state = start;
+	PORTC = 0x07;
+
     while (1) {
 	tmpA = ~PINA & 0x03;
 	Tick();	

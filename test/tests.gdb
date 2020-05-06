@@ -29,8 +29,8 @@ echo Running all tests..."\n\n
 
 # Test 1
 test "All possible paths tested & increment on 0x09"
-set state = Init
-timeContinue
+set state = wait
+expectPORTC 0x07
 setPINA 0xFF
 timeContinue
 expect state wait
@@ -74,11 +74,10 @@ checkResult
 
 # Test 2
 test "PINA: 0x03 => PORTC: 0, state: wait"
-set state = Init
-timeContinue
+set state = wait
+expectPORTC 0x07
 setPINA 0xFC
 timeContinue
-#continue 5
 expect state reset
 expectPORTC 0x00
 setPINA 0xFC
@@ -88,8 +87,7 @@ checkResult
 
 # Test 3
 test "PINA: 0x01 => PORTC: 8, state: waitInc"
-set state = Init
-timeContinue
+set state = wait
 setPINA 0xFE
 timeContinue
 expect state inc
@@ -98,8 +96,7 @@ checkResult
 
 # Test 4
 test "PINA: 0x02 => PORTC: 6, state: waitDec"
-set state = Init
-timeContinue
+set state = wait
 setPINA 0xFD
 timeContinue
 expect state dec
@@ -108,7 +105,7 @@ checkResult
 
 # Test 5
 test "Decrement on 0x00"
-set state = Init
+set state = wait
 timeContinue
 setPINA 0xFD
 timeContinue

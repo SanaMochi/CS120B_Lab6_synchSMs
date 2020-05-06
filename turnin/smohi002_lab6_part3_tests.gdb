@@ -1,102 +1,152 @@
-/*	Author: Sana
- *  Partner(s) Name: 
- *	Lab Section:
- *	Assignment: Lab #6  Exercise 2
- *	Exercise Description: [optional - include for your own benefit]
- *
- *	I acknowledge all content contained herein, excluding template or example
- *	code, is my own original work.
- */
-#include <avr/io.h>
-#ifdef _SIMULATE_
-#include "simAVRHeader.h"
-#include "../header/timer.h"
-#endif
+# Test file for "Lab6_synchSMs"
 
 
+# commands.gdb provides the following functions for ease:
+#   test "<message>"
+#       Where <message> is the message to print. Must call this at the beginning of every test
+#       Example: test "PINA: 0x00 => expect PORTC: 0x01"
+#   checkResult
+#       Verify if the test passed or failed. Prints "passed." or "failed." accordingly, 
+#       Must call this at the end of every test.
+#   expectPORTx <val>
+#       With x as the port (A,B,C,D)
+#       The value the port is epected to have. If not it will print the erroneous actual value
+#   setPINx <val>
+#       With x as the port or pin (A,B,C,D)
+#       The value to set the pin to (can be decimal or hexidecimal
+#       Example: setPINA 0x01
+#   printPORTx f OR printPINx f 
+#       With x as the port or pin (A,B,C,D)
+#       With f as a format option which can be: [d] decimal, [x] hexadecmial (default), [t] binary 
+#       Example: printPORTC d
+#   printDDRx
+#       With x as the DDR (A,B,C,D)
+#       Example: printDDRB
 
-enum States {start, Init, wait, dec, waitDec, inc, waitInc, reset, waitReset} state;
 
-      unsigned char tmpA;
+echo ======================================================\n
+echo Running all tests..."\n\n
 
-void Tick() {
-	switch(state) {
-		case start:
-			state = Init;
-			break;
-		case Init:
-			state = wait;
-			PORTC = 0x07;
-			break;
-		case wait:
-			if (tmpA == 0x00) {	 state = wait;}
-			else if (tmpA == 0x01) { state = inc;}
-			else if (tmpA == 0x02) { state = dec;}
-			else 		       {  state = reset;}
-			break;
-		case dec:
-//			state = waitDec;
-			if (tmpA == 0x02) {	 state = waitDec;}
-			else if (tmpA == 0x03) { state = reset;}
-			else {			 state = wait;}
-			break;
-		case waitDec:
-			if (tmpA == 0x02) {	 state = waitDec;}
-			else if (tmpA == 0x03) { state = reset;}
-			else {			 state = wait;}
-			break;
-		case inc:
-//			state = waitInc;
-			if (tmpA == 0x01) {      state = waitInc;}
-                        else if (tmpA == 0x03) { state = reset;}
-                        else {                   state = wait;}
-			break;
-		case waitInc:
-			if (tmpA == 0x01) {	 state = waitInc;}
-                        else if (tmpA == 0x03) { state = reset;}
-			else { 			 state = wait;}
-                        break;
-		case reset:
-//			state = waitReset;
-                        if (tmpA == 0x03) { state = waitReset;}
-                        else {              state = wait;}
-			break;
-		case waitReset:
-			if (tmpA == 0x03) { state = waitReset;}
-			else {		    state = wait;}
-                        break;
-		default:
-			PORTC = 0x07;
-			state = start;
-			break;
-	};
-	switch(state) {
-		case Init:					break;
-		case wait:					break;
-		case dec:	if (PORTC != 0x00) {PORTC--;}	break;
-		case waitDec:					break;
-		case inc:	if (PORTC != 0x09) {PORTC++;}	break;
-		case waitInc:					break;
-		case reset:	PORTC = 0x00;			break;
-		case waitReset:					break;
-		default:					break;
-	};
-}
+# Test 1
+test "All possible paths tested & increment on 0x09"
+set state = wait
+expectPORTC 0x07
+setPINA 0xFF
+timeContinue
+expect state wait
+setPINA 0xFF
+timeContinue
+expect state wait
+setPINA 0xFE
+timeContinue
+expect state inc
+expectPORTC 0x08
+setPINA 0xFE
+timeContinue
+expect state waitInc
+setPINA 0xFF
+timeContinue
+expect state wait
+setPINA 0xFE
+timeContinue
+expect state inc
+expectPORTC 0x09
+setPINA 0xFF
+timeContinue
+expect state wait
+expectPORTC 0x09
+timeContinue
+setPINA 0xFE
+timeContinue
+expect state inc
+expectPORTC 0x09
+setPINA 0xFF
+timeContinue
+expect state wait
+setPINA 0xFF
+timeContinue
+expect state wait
+setPINA 0xFC
+timeContinue
+expect state reset
+expectPORTB 0x00
+checkResult
 
-int main(void) {
-    /* Insert DDR and PORT initializations */
-	DDRA = 0x00; PORTA = 0xFF; //PORTA = input
-	DDRC = 0xFF; PORTC = 0x00; //PORTB = output
+# Test 2
+test "PINA: 0x03 => PORTC: 0, state: wait"
+set state = wait
+expectPORTC 0x07
+setPINA 0xFC
+timeContinue
+expect state reset
+expectPORTC 0x00
+setPINA 0xFC
+timeContinue
+expect state waitReset
+checkResult
 
-	TimerSet(100);
-	TimerOn();
+# Test 3
+test "PINA: 0x01 => PORTC: 8, state: waitInc"
+set state = wait
+setPINA 0xFE
+timeContinue
+expect state inc
+expectPORTC 0x08
+checkResult
 
-	state = start;
-    while (1) {
-	tmpA = ~PINA & 0x03;
-	Tick();	
-	while(!TimerFlag);
-	TimerFlag = 0;
-    }
-    return 1;
-}
+# Test 4
+test "PINA: 0x02 => PORTC: 6, state: waitDec"
+set state = wait
+setPINA 0xFD
+timeContinue
+expect state dec
+expectPORTC 0x06
+checkResult
+
+# Test 5
+test "Decrement on 0x00"
+set state = wait
+timeContinue
+setPINA 0xFD
+timeContinue
+expectPORTC 0x06
+expect state dec
+setPINA 0xFD
+timeContinue
+expect state waitDec
+setPINA 0xFF
+timeContinue
+expect state wait
+setPINA 0xFD
+timeContinue
+expectPORTC 0x05
+expect state dec
+setPINA 0xFF
+timeContinue
+expect state wait
+setPINA 0xFC
+timeContinue
+expectPORTC 0x00
+expect state reset
+setPINA 0xFF
+timeContinue
+expectPORTC 0x00
+expect state wait
+setPINA 0xFD
+timeContinue
+expectPORTC 0x00
+expect state dec
+#setPINA 0x00
+#continue 5
+#expectPORTB 0x01
+#expect state waitRise1
+#setPINA 0x01
+#continue 5
+#expectPORTB 0x02
+#expect state waitFall1
+checkResult
+
+# Report on how many tests passed/tests ran
+set $passed=$tests-$failed
+eval "shell echo Passed %d/%d tests.\n",$passed,$tests
+echo ======================================================\n
