@@ -23,70 +23,130 @@
 #       With x as the DDR (A,B,C,D)
 #       Example: printDDRB
 
+
 echo ======================================================\n
 echo Running all tests..."\n\n
 
-# Add tests below
-test "Loop all of PORTB without buttons"
-set state = start
-setPINA 0xFF
+# Test 1
+test "All possible paths tested & increment on 0x09"
+set state = Init
 timeContinue
-expect state pb0
-expectPORTB 0x01
-setPINA 0xFF
-timeContinue
-expect state pb1
-expectPORTB 0x02
-setPINA 0xFF
-timeContinue
-expect state pb2
-expect PORTB 0x04
-timeContinue
-expect state pb11
-expectPORTB 0x02
-timeContinue
-expect state pb0
-expectPORTB 0x01
-checkResult
-
-test "Loop all of PORTB with button on pb1"
-set state = start
-setPINA 0xFF
-timeContinue
-expect state pb0
-expectPORTB 0x01
-timeContinue
-expect state pb1
-expectPORTB 0x02
-setPINA 0xFE
-timeContinue
-expect state waitfall
-expectPORTB 0x02
-setPINA 0xFE
-timeContinue
-expect state waitfall
-expectPORTB 0x02
 setPINA 0xFF
 timeContinue
 expect state wait
-expect PORTB 0x02
 setPINA 0xFF
 timeContinue
 expect state wait
-expect PORTB 0x02
 setPINA 0xFE
 timeContinue
-expect state pb0
-expectPORTB 0x01
+expect state inc
+expectPORTC 0x08
+setPINA 0xFE
+timeContinue
+expect state waitInc
+setPINA 0xFF
+timeContinue
+expect state wait
+setPINA 0xFE
+timeContinue
+expect state inc
+expectPORTC 0x09
+setPINA 0xFF
+timeContinue
+expect state wait
+expectPORTC 0x09
+timeContinue
+setPINA 0xFE
+timeContinue
+expect state inc
+expectPORTC 0x09
+setPINA 0xFF
+timeContinue
+expect state wait
+setPINA 0xFF
+timeContinue
+expect state wait
+setPINA 0xFC
+timeContinue
+expect state reset
+expectPORTB 0x00
 checkResult
 
-test "button on pb0"
+# Test 2
+test "PINA: 0x03 => PORTC: 0, state: wait"
+set state = Init
+timeContinue
+setPINA 0xFC
+timeContinue
+#continue 5
+expect state reset
+expectPORTC 0x00
+setPINA 0xFC
+timeContinue
+expect state waitReset
+checkResult
+
+# Test 3
+test "PINA: 0x01 => PORTC: 8, state: waitInc"
+set state = Init
+timeContinue
 setPINA 0xFE
 timeContinue
-expect state waitfall
-expect PORTB 0x01
-timeContinue
+expect state inc
+expectPORTC 0x08
+checkResult
 
+# Test 4
+test "PINA: 0x02 => PORTC: 6, state: waitDec"
+set state = Init
+timeContinue
+setPINA 0xFD
+timeContinue
+expect state dec
+expectPORTC 0x06
+checkResult
+
+# Test 5
+test "Decrement on 0x00"
+set state = Init
+timeContinue
+setPINA 0xFD
+timeContinue
+expectPORTC 0x06
+expect state dec
+setPINA 0xFD
+timeContinue
+expect state waitDec
+setPINA 0xFF
+timeContinue
+expect state wait
+setPINA 0xFD
+timeContinue
+expectPORTC 0x05
+expect state dec
+setPINA 0xFF
+timeContinue
+expect state wait
+setPINA 0xFC
+timeContinue
+expectPORTC 0x00
+expect state reset
+setPINA 0xFF
+timeContinue
+expectPORTC 0x00
+expect state wait
+setPINA 0xFD
+timeContinue
+expectPORTC 0x00
+expect state dec
+#setPINA 0x00
+#continue 5
+#expectPORTB 0x01
+#expect state waitRise1
+#setPINA 0x01
+#continue 5
+#expectPORTB 0x02
+#expect state waitFall1
 checkResult
 
 # Report on how many tests passed/tests ran
