@@ -23,127 +23,79 @@
 #       With x as the DDR (A,B,C,D)
 #       Example: printDDRB
 
-
 echo ======================================================\n
 echo Running all tests..."\n\n
 
-# Test 1
-test "All possible paths tested & increment on 0x09"
-set state = wait
-expectPORTC 0x07
+# Add tests below
+test "Loop all of PORTB without buttons"
+set state = start
 setPINA 0xFF
 timeContinue
-expect state wait
-setPINA 0xFF
+expect state pb0
+expectPORTB 0x01
 timeContinue
-expect state wait
-setPINA 0xFE
+expect state pb1
+expectPORTB 0x02
 timeContinue
-expect state inc
-expectPORTC 0x08
-setPINA 0xFE
+expect state pb2
+expect PORTB 0x04
 timeContinue
-expect state waitInc
-setPINA 0xFF
+expect state pb11
+expectPORTB 0x02
 timeContinue
-expect state wait
-setPINA 0xFE
-timeContinue
-expect state inc
-expectPORTC 0x09
-setPINA 0xFF
-timeContinue
-expect state wait
-expectPORTC 0x09
-timeContinue
-setPINA 0xFE
-timeContinue
-expect state inc
-expectPORTC 0x09
-setPINA 0xFF
-timeContinue
-expect state wait
-setPINA 0xFF
-timeContinue
-expect state wait
-setPINA 0xFC
-timeContinue
-expect state reset
-expectPORTB 0x00
+expect state pb0
+expectPORTB 0x01
 checkResult
 
-# Test 2
-test "PINA: 0x03 => PORTC: 0, state: wait"
-set state = wait
-expectPORTC 0x07
-setPINA 0xFC
+test "Loop all of PORTB with button on pb1"
+set state = start
+setPINA 0xFF
 timeContinue
-expect state reset
-expectPORTC 0x00
-setPINA 0xFC
+expect state pb0
+expectPORTB 0x01
 timeContinue
-expect state waitReset
-checkResult
-
-# Test 3
-test "PINA: 0x01 => PORTC: 8, state: waitInc"
-set state = wait
+expect state pb1
+expectPORTB 0x02
 setPINA 0xFE
 timeContinue
-expect state inc
-expectPORTC 0x08
-checkResult
-
-# Test 4
-test "PINA: 0x02 => PORTC: 6, state: waitDec"
-set state = wait
-setPINA 0xFD
+expect state waitfall
+expectPORTB 0x02
+setPINA 0xFE
 timeContinue
-expect state dec
-expectPORTC 0x06
-checkResult
-
-# Test 5
-test "Decrement on 0x00"
-set state = wait
-timeContinue
-setPINA 0xFD
-timeContinue
-expectPORTC 0x06
-expect state dec
-setPINA 0xFD
-timeContinue
-expect state waitDec
+expect state waitfall
+expectPORTB 0x02
 setPINA 0xFF
 timeContinue
 expect state wait
-setPINA 0xFD
-timeContinue
-expectPORTC 0x05
-expect state dec
+expect PORTB 0x02
 setPINA 0xFF
 timeContinue
 expect state wait
-setPINA 0xFC
+expect PORTB 0x02
+setPINA 0xFE
 timeContinue
-expectPORTC 0x00
-expect state reset
+expect state pb0
+expectPORTB 0x01
+#checkResult
+#test "buton held down on second press"
+#set state = pb0h
 setPINA 0xFF
 timeContinue
-expectPORTC 0x00
-expect state wait
-setPINA 0xFD
+expect state pb1
+expect PORTB 0x02
 timeContinue
-expectPORTC 0x00
-expect state dec
-#setPINA 0x00
-#continue 5
-#expectPORTB 0x01
-#expect state waitRise1
-#setPINA 0x01
-#continue 5
-#expectPORTB 0x02
-#expect state waitFall1
+expect state pb2
+expectPORTB 0x04
+timeContinue
+expect state pb11
+expectPORTB 0x02
+timeContinue
+expect state pb0
+expect PORTB 0x01
+timeContinue
+setPINA 0xFF
+expect state pb1
+expectPORTB 0x02
 checkResult
 
 # Report on how many tests passed/tests ran

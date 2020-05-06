@@ -13,7 +13,7 @@
 #include "../header/timer.h"
 #endif
 
-enum States {start, pb0, waitfall, wait, pb1, pb2, pb11} state;
+enum States {start, pb0, waitfall, wait, pb1, pb2, pb11, pb0h, pb1h, pb2h, pb11h} state;
 
 unsigned char A0 = 0x00;
 
@@ -44,8 +44,20 @@ void Tick() {
                         break;
                 case wait:
                         if (!A0) state = wait;
-                        else state = pb0;
+                        else {state = pb0; PORTB = 0x01;}
                         break;
+		case pb0h:
+			if (!A0) state = pb1;
+			else state = pb1h;
+		case pb1h:
+			if (!A0) state = pb2;
+			else state = pb2h;
+		case pb2h:
+			if (!A0) state = pb11;
+			else state = pb11h;
+		case pb11h:
+			if (!A0) state = pb0;
+			else state = pb0h;
 		default:
 			state = start;
 			break;
@@ -64,7 +76,19 @@ void Tick() {
 			PORTB = 0x02;
 			break;
 		case waitfall:  break;
-                case wait:      break;
+                case wait:	break;
+		case pb0h:
+			PORTB = 0x01;
+			break;
+		case pb1h:
+			PORTB = 0x02;
+			break;
+		case pb2h:
+			PORTB = 0x04;
+			break;
+		case pb11h:
+			PORTB = 0x01;
+			break;
 		default: 	break;
 	};
 }

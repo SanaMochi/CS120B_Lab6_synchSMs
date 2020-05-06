@@ -1,95 +1,111 @@
-# Test file for "Lab6_synchSMs"
+/*	Author: Sana
+ *  Partner(s) Name: 
+ *	Lab Section:
+ *	Assignment: Lab #6  Exercise 2
+ *	Exercise Description: [optional - include for your own benefit]
+ *
+ *	I acknowledge all content contained herein, excluding template or example
+ *	code, is my own original work.
+ */
+#include <avr/io.h>
+#ifdef _SIMULATE_
+#include "simAVRHeader.h"
+#include "../header/timer.h"
+#endif
 
+enum States {start, pb0, waitfall, wait, pb1, pb2, pb11, pb0h, pb1h, pb2h, pb11h} state;
 
-# commands.gdb provides the following functions for ease:
-#   test "<message>"
-#       Where <message> is the message to print. Must call this at the beginning of every test
-#       Example: test "PINA: 0x00 => expect PORTC: 0x01"
-#   checkResult
-#       Verify if the test passed or failed. Prints "passed." or "failed." accordingly, 
-#       Must call this at the end of every test.
-#   expectPORTx <val>
-#       With x as the port (A,B,C,D)
-#       The value the port is epected to have. If not it will print the erroneous actual value
-#   setPINx <val>
-#       With x as the port or pin (A,B,C,D)
-#       The value to set the pin to (can be decimal or hexidecimal
-#       Example: setPINA 0x01
-#   printPORTx f OR printPINx f 
-#       With x as the port or pin (A,B,C,D)
-#       With f as a format option which can be: [d] decimal, [x] hexadecmial (default), [t] binary 
-#       Example: printPORTC d
-#   printDDRx
-#       With x as the DDR (A,B,C,D)
-#       Example: printDDRB
+unsigned char A0 = 0x00;
 
-echo ======================================================\n
-echo Running all tests..."\n\n
+void Tick() {
+	switch(state) {
+		case start:
+			state = pb0;
+			break;
+		case pb0:
+			if (!A0) state = pb1;
+			else state = waitfall;
+			break;
+		case pb1:
+			if (!A0) state = pb2;
+			else state = waitfall;
+			break;
+		case pb2:
+			if (!A0) state = pb11;
+			else state = waitfall;
+                        break;
+		case pb11:
+			if (!A0) state = pb0; 
+			else state = waitfall;
+			break;
+		case waitfall:
+                        if (!A0) state = wait;
+                        else state = waitfall;
+                        break;
+                case wait:
+                        if (!A0) state = wait;
+                        else {state = pb0; PORTB = 0x01;}
+                        break;
+		case pb0h:
+			if (!A0) state = pb1;
+			else state = pb1h;
+		case pb1h:
+			if (!A0) state = pb2;
+			else state = pb2h;
+		case pb2h:
+			if (!A0) state = pb11;
+			else state = pb11h;
+		case pb11h:
+			if (!A0) state = pb0;
+			else state = pb0h;
+		default:
+			state = start;
+			break;
+	};
+	switch(state) {
+		case pb0:
+			PORTB = 0x01;
+			break;
+		case pb1:
+			PORTB = 0x02;
+			break;
+		case pb2:
+			PORTB = 0x04;
+			break;
+		case pb11:
+			PORTB = 0x02;
+			break;
+		case waitfall:  break;
+                case wait:	break;
+		case pb0h:
+			PORTB = 0x01;
+			break;
+		case pb1h:
+			PORTB = 0x02;
+			break;
+		case pb2h:
+			PORTB = 0x04;
+			break;
+		case pb11h:
+			PORTB = 0x01;
+			break;
+		default: 	break;
+	};
+}
+	
+int main(void) {
+	DDRA = 0x00; // Set port A to input
+	DDRB = 0xFF; // Set port B to output
+	PORTA = 0xFF; //Init port A to 0xFF
+	PORTB = 0x00; // Init port B to 0x00
+	TimerSet(300);
+	TimerOn();
 
-# Add tests below
-test "Loop all of PORTB without buttons"
-set state = start
-setPINA 0xFF
-timeContinue
-expect state pb0
-expectPORTB 0x01
-setPINA 0xFF
-timeContinue
-expect state pb1
-expectPORTB 0x02
-setPINA 0xFF
-timeContinue
-expect state pb2
-expect PORTB 0x04
-timeContinue
-expect state pb11
-expectPORTB 0x02
-timeContinue
-expect state pb0
-expectPORTB 0x01
-checkResult
-
-test "Loop all of PORTB with button on pb1"
-set state = start
-setPINA 0xFF
-timeContinue
-expect state pb0
-expectPORTB 0x01
-timeContinue
-expect state pb1
-expectPORTB 0x02
-setPINA 0xFE
-timeContinue
-expect state waitfall
-expectPORTB 0x02
-setPINA 0xFE
-timeContinue
-expect state waitfall
-expectPORTB 0x02
-setPINA 0xFF
-timeContinue
-expect state wait
-expect PORTB 0x02
-setPINA 0xFF
-timeContinue
-expect state wait
-expect PORTB 0x02
-setPINA 0xFE
-timeContinue
-expect state pb0
-expectPORTB 0x01
-checkResult
-
-test "button on pb0"
-setPINA 0xFE
-timeContinue
-expect state waitfall
-expect PORTB 0x01
-timeContinue
-
-checkResult
-
-# Report on how many tests passed/tests ran
-set $passed=$tests-$failed
-eval "shell echo Passed %d/%d tests.\n",$passed,$tests
-echo ======================================================\n
+    while (1) {
+	A0 = (~PINA & 0x01);
+	Tick();
+	while(!TimerFlag); // Wait 1 sec
+	TimerFlag = 0;
+    }
+    return 1;
+}

@@ -15,16 +15,19 @@
 
 
 
-enum States {start, wait, dec, waitDec, inc, waitInc, reset, waitReset} state;
+enum States {start, Init, wait, dec, waitDec, inc, waitInc, reset, waitReset} state;
 
       unsigned char tmpA;
 
 void Tick() {
 	switch(state) {
 		case start:
-			PORTC = 0x07;
+//			PORTC = 0x07;
 			state = wait;
 			break;
+		case Init:
+			PORTC = 0x07;
+			state = wait;
 		case wait:
 			if (tmpA == 0x00) {	 state = wait;}
 			else if (tmpA == 0x01) { state = inc;}
@@ -65,6 +68,7 @@ void Tick() {
 			break;
 	}
 	switch(state) {
+		case Init:					break;
 		case wait:					break;
 		case dec:	if (PORTC != 0x00) {PORTC--;}	break;
 		case waitDec:					break;
