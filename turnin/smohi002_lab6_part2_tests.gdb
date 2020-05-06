@@ -44,20 +44,24 @@ void Tick() {
                         break;
                 case wait:
                         if (!A0) state = wait;
-                        else {state = pb0; PORTB = 0x01;}
+                        else {state = pb0h; PORTB = 0x01;}
                         break;
 		case pb0h:
 			if (!A0) state = pb1;
 			else state = pb1h;
+			break;
 		case pb1h:
 			if (!A0) state = pb2;
 			else state = pb2h;
+			break;
 		case pb2h:
 			if (!A0) state = pb11;
 			else state = pb11h;
+			break;
 		case pb11h:
 			if (!A0) state = pb0;
 			else state = pb0h;
+			break;
 		default:
 			state = start;
 			break;
@@ -87,7 +91,7 @@ void Tick() {
 			PORTB = 0x04;
 			break;
 		case pb11h:
-			PORTB = 0x01;
+			PORTB = 0x02;
 			break;
 		default: 	break;
 	};

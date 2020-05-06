@@ -74,23 +74,24 @@ expect state wait
 expect PORTB 0x02
 setPINA 0xFE
 timeContinue
-expect state pb0
+expect state pb0h
 expectPORTB 0x01
-#checkResult
-#test "buton held down on second press"
+checkResult
+
+test "buton held down on second press"
 #set state = pb0h
-setPINA 0xFF
+#setPINA 0xFE
 timeContinue
-expect state pb1
+expect state pb1h
 expect PORTB 0x02
 timeContinue
-expect state pb2
+expect state pb2h
 expectPORTB 0x04
 timeContinue
-expect state pb11
+expect state pb11h
 expectPORTB 0x02
 timeContinue
-expect state pb0
+expect state pb0h
 expect PORTB 0x01
 timeContinue
 setPINA 0xFF
