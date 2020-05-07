@@ -140,14 +140,44 @@ setPINA 0xFD
 timeContinue
 expectPORTB 0x00
 expect state dec
-#setPINA 0x00
-#continue 5
-#expectPORTB 0x01
-#expect state waitRise1
-#setPINA 0x01
-#continue 5
-#expectPORTB 0x02
-#expect state waitFall1
+checkResult
+
+test "Hold down button"
+set state = Init
+timeContinue
+setPINA 0xFD
+timeContinue
+expectPORTB 0x06
+setPINA 0xFD
+timeContinue
+timeContinue
+timeContinue
+timeContinue
+timeContinue
+timeContinue
+timeContinue
+timeContinue
+timeContinue
+timeContinue
+timeContinue
+expectPORTB 0x05
+timeContinue
+expectPORTB 0x05
+timeContinue
+expectPORTB 0x05
+timeContinue
+expectPORTB 0x05
+timeContinue
+expectPORTB 0x05
+timeContinue
+timeContinue
+timeContinue
+timeContinue
+timeContinue
+timeContinue
+timeContinue
+expectPORTB 0x04
+
 checkResult
 
 # Report on how many tests passed/tests ran

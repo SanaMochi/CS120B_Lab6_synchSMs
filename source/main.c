@@ -1,7 +1,7 @@
 /*	Author: Sana
  *  Partner(s) Name: 
  *	Lab Section:
- *	Assignment: Lab #6  Exercise 2
+ *	Assignment: Lab #6  Exercise 3
  *	Exercise Description: [optional - include for your own benefit]
  *
  *	I acknowledge all content contained herein, excluding template or example
@@ -18,11 +18,11 @@
 enum States {start, Init, wait, dec, waitDec, inc, waitInc, reset, waitReset} state;
 
       unsigned char tmpA;
+      unsigned char i = 0x00;
 
 void Tick() {
 	switch(state) {
 		case start:
-//			PORTB = 0x07;
 			state = Init;
 			break;
 		case Init:
@@ -41,9 +41,10 @@ void Tick() {
 			else {			 state = wait;}
 			break;
 		case waitDec:
-			if (tmpA == 0x02) {	 state = waitDec;}
-			else if (tmpA == 0x03) { state = reset;}
-			else {			 state = wait;}
+			if (tmpA == 0x02 && i < 10) {	   state = waitDec;}
+			else if (tmpA == 0x03 && i < 10) { state = reset;}
+			else if (i >= 10) {	 	   state = dec; i = 0;}
+			else {			 	   state = wait;}
 			break;
 		case inc:
 			if (tmpA == 0x01) {      state = waitInc;}
@@ -51,9 +52,10 @@ void Tick() {
                         else {                   state = wait;}
 			break;
 		case waitInc:
-			if (tmpA == 0x01) {	 state = waitInc;}
-                        else if (tmpA == 0x03) { state = reset;}
-			else { 			 state = wait;}
+			if (tmpA == 0x01 && i < 10) {	   state = waitInc;}
+                        else if (tmpA == 0x03 && i < 10) { state = reset;}
+			else if (i >= 10) { 	 	   state = inc; i = 0;}
+			else { 			 	   state = wait;}
                         break;
 		case reset:
                         if (tmpA == 0x03) { state = waitReset;}
@@ -69,13 +71,13 @@ void Tick() {
 			break;
 	}
 	switch(state) {
-		case Init:	/*PORTB = 0x07;*/			break;
+		case Init:	/*PORTB = 0x07;*/		break;
 		case wait:					break;
 		case dec:	if (PORTB != 0x00) {PORTB--;}	break;
-		case waitDec:					break;
+		case waitDec:	i++;				break;
 		case inc:	if (PORTB != 0x09) {PORTB++;}	break;
-		case waitInc:					break;
-		case reset:	PORTB = 0x00;			break;
+		case waitInc:	i++;				break;
+		case reset:	PORTB = 0x00; 			break;
 		case waitReset:					break;
 		default:	/*PORTB = 0x07;*/		break;
 	}
@@ -84,11 +86,12 @@ void Tick() {
 int main(void) {
     /* Insert DDR and PORT initializations */
 	DDRA = 0x00; PORTA = 0xFF; //PORTA = input
-	DDRB = 0xFF; PORTB = 0x07; //PORTC = output
+	DDRB = 0xFF; PORTB = 0x07; //PORTB = output
 
 	TimerSet(100);
 	TimerOn();
 
+	i = 0x00;
 	state = start;
 
     while (1) {
