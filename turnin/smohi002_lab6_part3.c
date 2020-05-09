@@ -1,14 +1,12 @@
 /*	Author: Sana
  *  Partner(s) Name: 
  *	Lab Section:
- *	Assignment: Lab #6  Exercise 3
+ *fffffgnment: Lab #6  Exercise 3
  *	Exercise Description: [optional - include for your own benefit]
  *
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
  */
-
-//Demo: https://drive.google.com/open?id=101--3C1OP32WnQlIJ07kEyhiWg9GF8ED
 #include <avr/io.h>
 #ifdef _SIMULATE_
 #include "simAVRHeader.h"
@@ -17,7 +15,7 @@
 
 
 
-enum States {start, Init, wait, dec, waitDec, inc, waitInc, reset, waitReset} state;
+enum States {start, /*Init,*/ wait, dec, waitDec, inc, waitInc, reset, waitReset} state;
 
       unsigned char tmpA;
       unsigned char i = 0x00;
@@ -25,13 +23,15 @@ enum States {start, Init, wait, dec, waitDec, inc, waitInc, reset, waitReset} st
 void Tick() {
 	switch(state) {
 		case start:
-			state = Init;
+//			PORTB = 0x07;
+			state = wait;
+//			state = Init;
 			break;
-		case Init:
-			PORTB = 0x07;
+/*		case Init:
+//			PORTB = 0x07;
 			state = wait;
 			break;
-		case wait:
+*/		case wait:
 			if (tmpA == 0x00) {	 state = wait;}
 			else if (tmpA == 0x01) { state = inc;}
 			else if (tmpA == 0x02) { state = dec;}
@@ -73,7 +73,8 @@ void Tick() {
 			break;
 	}
 	switch(state) {
-		case Init:	/*PORTB = 0x07;*/		break;
+		case start:					break;
+//		case Init:	PORTB = 0x07;			break;
 		case wait:					break;
 		case dec:	if (PORTB != 0x00) {PORTB--;}	break;
 		case waitDec:	i++;				break;
@@ -81,7 +82,7 @@ void Tick() {
 		case waitInc:	i++;				break;
 		case reset:	PORTB = 0x00; 			break;
 		case waitReset:					break;
-		default:	/*PORTB = 0x07;*/		break;
+		default:					break;
 	}
 }
 
@@ -90,6 +91,7 @@ int main(void) {
 	DDRA = 0x00; PORTA = 0xFF; //PORTA = input
 	DDRB = 0xFF; PORTB = 0x07; //PORTB = output
 
+	PORTB = 0x07;
 	TimerSet(100);
 	TimerOn();
 

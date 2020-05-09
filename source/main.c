@@ -15,7 +15,7 @@
 
 
 
-enum States {start, Init, wait, dec, waitDec, inc, waitInc, reset, waitReset} state;
+enum States {start, /*Init,*/ wait, dec, waitDec, inc, waitInc, reset, waitReset} state;
 
       unsigned char tmpA;
       unsigned char i = 0x00;
@@ -23,15 +23,15 @@ enum States {start, Init, wait, dec, waitDec, inc, waitInc, reset, waitReset} st
 void Tick() {
 	switch(state) {
 		case start:
-			PORTB = 0x07;
-//			state = wait;
-			state = Init;
+//			PORTB = 0x07;
+			state = wait;
+//			state = Init;
 			break;
-		case Init:
-			PORTB = 0x07;
+/*		case Init:
+//			PORTB = 0x07;
 			state = wait;
 			break;
-		case wait:
+*/		case wait:
 			if (tmpA == 0x00) {	 state = wait;}
 			else if (tmpA == 0x01) { state = inc;}
 			else if (tmpA == 0x02) { state = dec;}
@@ -74,7 +74,7 @@ void Tick() {
 	}
 	switch(state) {
 		case start:					break;
-		case Init:	PORTB = 0x07;			break;
+//		case Init:	PORTB = 0x07;			break;
 		case wait:					break;
 		case dec:	if (PORTB != 0x00) {PORTB--;}	break;
 		case waitDec:	i++;				break;
@@ -91,6 +91,7 @@ int main(void) {
 	DDRA = 0x00; PORTA = 0xFF; //PORTA = input
 	DDRB = 0xFF; PORTB = 0x07; //PORTB = output
 
+	PORTB = 0x07;
 	TimerSet(100);
 	TimerOn();
 

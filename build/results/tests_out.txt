@@ -1,7 +1,8 @@
-Breakpoint 1 at 0x640: file source/main.c, line 100.
+Breakpoint 1 at 0x618: file source/main.c, line 101.
 Note: automatically using hardware breakpoints for read-only addresses.
 ======================================================
 Running all tests..."
 
-"All possible paths tested & increment on 0x09"..."PINA: 0x03 => PORTC: 0, state: wait"..."PINA: 0x01 => PORTC: 8, state: waitInc"..."PINA: 0x02 => PORTC: 6, state: waitDec"..."Decrement on 0x00"..."Hold down button"...======================================================
+"All possible paths tested & increment on 0x09"..."PINA: 0x03 => PORTC: 0, state: wait"...test/tests.gdb:79: Error in sourced command file:
+No symbol "Init" in current context.
 Remote doesn't know how to detach
